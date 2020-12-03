@@ -1,0 +1,152 @@
+public class LlangtonsAnt {
+    private Position pos;
+    private int Richtung;
+    private int x;
+    private int y;
+    private static LlangtonsAnt ant;
+    private static char [] [] area;
+    public int dimension;
+    public int innerDimension;
+
+
+    public LlangtonsAnt(Position pos){
+        this.pos = new Position(x,y);
+        this.Richtung = 90;
+    }
+
+    public LlangtonsAnt(int dimension, int innerDimension){
+        this.dimension = dimension;
+        this.innerDimension = dimension;
+    }
+
+
+    public class Position {
+        int x;
+        int y;
+        public Position (int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public int getX() {
+        return x;
+    }
+    public int getY(){
+        return y;
+    }
+
+    // wenn aktuelles feld 'X' gehe nach rechts, wechsel aktuelles feld auf ' '
+    // wenn aktuelles feld ' ' gehe nach links, wechsel aktuelles feld auf 'X'
+    public void move (char schwarzWeiss){
+        if(schwarzWeiss == 'X'){
+            switch (Richtung){
+                case 90:
+                    this.Richtung = 0;
+                    pos.y = y + 1;
+                    break;
+
+                case 0:
+                    this.Richtung = 270;
+                    pos.x = x + 1;
+                    break;
+
+                case 270:
+                    this.Richtung = 180;
+                    pos.y = y - 1;
+                    break;
+
+                case 180:
+                    this.Richtung = 90;
+                    pos.x = x - 1;
+                    break;
+            }
+        }
+        else if(schwarzWeiss == ' '){
+            switch (Richtung){
+                case 90:
+                    this.Richtung = 180;
+                    pos.y = y - 1;
+                    break;
+
+                case 0:
+                    this.Richtung = 90;
+                    pos.x = x - 1;
+                    break;
+
+                case 270:
+                    this.Richtung = 0;
+                    pos.y = y + 1;
+                    break;
+
+                case 180:
+                    this.Richtung = 270;
+                    pos.x = x + 1;
+                    break;
+            }
+        }
+    }
+
+
+
+    public static void initialize (int dimension, int innerDimension){
+        char [] [] outputArray = new char[dimension][dimension];
+        int innerx = innerDimension;
+        int innery = innerDimension;
+
+        LlangtonsAnt Ant = new LlangtonsAnt(ant.pos); //worauf bezieht sich das ant.pos?
+        Ant.x = dimension / 2 ; // Lassen sich die x/y Koodinaten so richtige deklarienen bzw. ist die Ameise "Ant" jetzt mittig?
+        Ant.y = dimension / 2 ;
+
+        //neues Array mit ' ' füllen
+        for(int i=0; i < outputArray.length; i++){
+            for(int j=0; j < outputArray.length; j++){
+                outputArray [i] [j] = ' ';
+            }
+        }
+        //inneren part des Array mit randome ' ' oder ' X ' füllen
+        for (int i=0; i < dimension; i++){
+            for (int j=0; j < dimension; j++){
+                double randomiser = Math.random() * 10;      //wie genau das innere Feld definiert wird überlege ich mir noch, aber Prinzip ist randome
+                if (Math.round(randomiser) >= 5){
+                    outputArray [innerx + i] [innery + j] = 'X';
+                }else {
+                    outputArray [innerx + i] [innery + j] = ' ';
+                }
+            }
+        }
+        // area variable mit den Chars des erstellten Arrays füllen
+        for(int i=0; i< outputArray.length;i++){
+            for (int j=0; j<outputArray.length;j++){
+                area [i] [j] = outputArray [i] [j];
+            }
+        }
+    }
+
+    // System.out.print("Aktuelle Position: " + ant.printToConsole);
+    public static char printToConsole() {
+        char output;
+        output = area [ant.x] [ant.y];
+    }
+
+    public static void run(){                 //kann Klassenmethode run auf Instanzmethode move zugreifen?
+        initialize(ant.dimension, ant.innerDimension);
+
+        //version eins von Ameise bewegt sich
+        ant.move(area[ant.dimension][ant.innerDimension]); // die "ant." methoden beziehen sich auf die oben als "private static LlangtonsAnt ant;" gesetzte Ameis,
+                                                           // oder gilt das selbe auch für "Ant" aus der initialize Metohde?
+        //version zwei von Ameise bewegt sich
+        for (int i=0; i > ant.dimension; i++){
+            for (int j=0; j > ant.dimension; j++){
+                ant.move(area[ant.dimension][ant.innerDimension]);
+            }
+        }
+        // stop programm if out of bounds
+        if (ant.y > ant.dimension){
+            System.exit(1);
+        }else if (ant.x > ant.dimension){
+            System.exit(1);                          // richtig so, falls nein wie call beenden break;?!
+        }
+    }
+
+}
